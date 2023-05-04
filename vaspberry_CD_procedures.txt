@@ -1,0 +1,25 @@
+vaspberry计算晶体CD
+
+1，必须要SOC，先vasp优化、计算出WAVECAR和BAND.dat
+
+2，vaspberry -kx 1 -ky 1 -cd 1
+	计算，可以得到VBM、CBM的序号，比如下面例子里是240~241
+
+3，计算上下个五个之间的跃迁，可以bash做
+
+#!/bin/bash
+
+for INITIAL in {236..240}
+do
+  for FINAL in {241..245}
+  do
+    vaspberry -kx 1 -ky 1 -cd 1 -ii $INITIAL -if $FINAL -o CD_${INITIAL}_${FINAL}.dat
+  done
+done
+
+
+4，把CIRC_DICHROISM.dat里面的kxkykz对应到K空间里面的kxkykz，看看该两条带之间的跃迁能量是多少，这步需要插值，很烦（
+5，这样就能知道该跃迁在不同能量上的selectivity是多少
+6，将25个跃迁的selectivity加和
+
+4、5、6已含在CD_plot.py
